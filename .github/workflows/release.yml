@@ -1,0 +1,133 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version for a dry-run build (for example v0.1.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.version || github.ref_name }}
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Test
+        run: go test -race -count=1 ./...
+      - name: Vet
+        run: go vet ./...
+      - name: Format
+        run: test -z "$(gofmt -l .)"
+
+  build:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Verify version injection
+        run: |
+          CGO_ENABLED=0 go build -trimpath \
+            -ldflags "-s -w -X main.version=${RELEASE_TAG}" \
+            -o /tmp/weave-image .
+          /tmp/weave-image --version
+      - name: Build archives
+        run: |
+          set -euo pipefail
+          VERSION="${RELEASE_TAG#v}"
+          mkdir -p dist
+          for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64 windows/arm64; do
+            os="${target%/*}"
+            arch="${target#*/}"
+            if [ "$os" = "windows" ]; then
+              CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" go build -trimpath -ldflags "-s -w -X main.version=${RELEASE_TAG}" -o dist/weave-image.exe .
+              stage="$(mktemp -d)"
+              cp dist/weave-image.exe README.md LICENSE "$stage"/
+              (cd "$stage" && zip -q "${GITHUB_WORKSPACE}/dist/weave-image_${VERSION}_${os}_${arch}.zip" weave-image.exe README.md LICENSE)
+              rm -rf "$stage" dist/weave-image.exe
+            else
+              CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" go build -trimpath -ldflags "-s -w -X main.version=${RELEASE_TAG}" -o dist/weave-image .
+              tar -czf "dist/weave-image_${VERSION}_${os}_${arch}.tar.gz" -C dist weave-image -C .. README.md LICENSE
+              rm dist/weave-image
+            fi
+          done
+          (cd dist && sha256sum *.tar.gz *.zip > "weave-image_${VERSION}_checksums.txt")
+      - uses: actions/upload-artifact@v4
+        with:
+          name: weave-image-dist
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: weave-image-dist
+          path: dist
+      - name: Verify checksums
+        run: |
+          VERSION="${RELEASE_TAG#v}"
+          (cd dist && sha256sum -c "weave-image_${VERSION}_checksums.txt")
+      - name: Refuse to overwrite an existing release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "${RELEASE_TAG}" >/dev/null 2>&1; then
+            echo "release ${RELEASE_TAG} already exists; refusing to overwrite" >&2
+            exit 1
+          fi
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PRERELEASE=""
+          case "${RELEASE_TAG}" in
+            *-rc*|*-beta*) PRERELEASE="--prerelease" ;;
+          esac
+          NOTES="$(printf '%s\n' \
+            'Install without compiling:' \
+            '' \
+            '```sh' \
+            'curl -fsSL https://raw.githubusercontent.com/prulloac/weave-image/main/scripts/install.sh | sh' \
+            '```' \
+            '' \
+            'Windows PowerShell:' \
+            '' \
+            '```powershell' \
+            'irm https://raw.githubusercontent.com/prulloac/weave-image/main/scripts/install.ps1 | iex' \
+            '```' \
+            '' \
+            'Or download an archive below.')"
+          gh release create "${RELEASE_TAG}" dist/* \
+            --draft \
+            --title "${RELEASE_TAG}" \
+            --generate-notes \
+            --notes "${NOTES}" \
+            ${PRERELEASE}
