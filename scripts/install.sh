@@ -251,8 +251,12 @@ ensure_weave_ai() {
   else
     echo "Installing weave-ai >= 1.0.0"
   fi
+  ai_install_args=(--bin-dir "$bin_dir")
+  if [ "$modify_path" -eq 0 ]; then
+    ai_install_args+=(--no-modify-path)
+  fi
   curl -fsSL https://raw.githubusercontent.com/prulloac/weave-ai/main/scripts/install.sh \
-    | sh -s -- --bin-dir "$bin_dir"
+    | bash -s -- "${ai_install_args[@]}"
   ai_path="${bin_dir}/weave-ai"
   [ -x "$ai_path" ] || error "weave-ai installation failed"
   ai_version="$("$ai_path" --version 2>/dev/null | awk '{ print $2; exit }')"

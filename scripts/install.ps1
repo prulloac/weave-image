@@ -98,7 +98,12 @@ try {
         }
         if ($AINeedsInstall) {
             Write-Host "Installing weave-ai >= 1.0.0"
-            Invoke-Expression (Invoke-RestMethod "https://raw.githubusercontent.com/prulloac/weave-ai/main/scripts/install.ps1")
+            $AIScriptPath = Join-Path $Temp "weave-ai-install.ps1"
+            Invoke-WebRequest -Uri "https://raw.githubusercontent.com/prulloac/weave-ai/main/scripts/install.ps1" -OutFile $AIScriptPath
+            $AIArgs = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $AIScriptPath, "-BinDir", $BinDir)
+            if ($SkipPath) { $AIArgs += "-NoPath" }
+            & (Join-Path $PSHOME "powershell.exe") @AIArgs
+            if ($LASTEXITCODE -ne 0) { throw "weave-ai installation failed" }
             $AICommand = Join-Path $BinDir "weave-ai.exe"
             if (-not (Test-Path $AICommand)) { throw "weave-ai installation failed" }
             $AIVersion = (& $AICommand --version 2>$null | Select-Object -First 1).Split(" ")[1]
