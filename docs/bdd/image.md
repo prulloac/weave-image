@@ -14,7 +14,7 @@ Behavior cases for the `weave-image` subprocess.
 - **When** I run `weave-image --describe --json`
 - **Then** it returns `weave.extension/v1`
 - **And** `asset_types` contains JPEG, PNG, WebP and GIF
-- **And** `requires` names `weave >= 1.1.0` and `weave-ai >= 1.1.0`
+- **And** `requires` names `weave >= 1.0.0` and `weave-ai >= 1.0.0`
 
 ### Scenario: Missing weave-ai still enriches locally
 
@@ -26,7 +26,7 @@ Behavior cases for the `weave-image` subprocess.
 
 ### Scenario: Old weave-ai is rejected
 
-- **Given** `weave-ai` reports `v1.0.0`
+- **Given** `weave-ai` reports `v0.9.0`
 - **When** an image is enriched
 - **Then** vision is skipped
 - **And** warnings name the required version

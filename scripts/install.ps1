@@ -90,21 +90,21 @@ try {
             $AIVersion = (& $AICommand --version 2>$null | Select-Object -First 1).Split(" ")[1]
             if ($AIVersion) {
                 $Parsed = $AIVersion.TrimStart("v")
-                if ($Parsed -match '^\d+\.\d+\.\d+$' -and [version]$Parsed -ge [version]"1.1.0") {
+                if ($Parsed -match '^\d+\.\d+\.\d+$' -and [version]$Parsed -ge [version]"1.0.0") {
                     $AINeedsInstall = $false
                     Write-Host "weave-ai $AIVersion is already installed"
                 }
             }
         }
         if ($AINeedsInstall) {
-            Write-Host "Installing weave-ai >= 1.1.0"
+            Write-Host "Installing weave-ai >= 1.0.0"
             Invoke-Expression (Invoke-RestMethod "https://raw.githubusercontent.com/prulloac/weave-ai/main/scripts/install.ps1")
             $AICommand = Join-Path $BinDir "weave-ai.exe"
             if (-not (Test-Path $AICommand)) { throw "weave-ai installation failed" }
             $AIVersion = (& $AICommand --version 2>$null | Select-Object -First 1).Split(" ")[1]
             $Parsed = $AIVersion.TrimStart("v")
-            if (-not ($Parsed -match '^\d+\.\d+\.\d+$') -or [version]$Parsed -lt [version]"1.1.0") {
-                throw "weave-ai $AIVersion is older than 1.1.0"
+            if (-not ($Parsed -match '^\d+\.\d+\.\d+$') -or [version]$Parsed -lt [version]"1.0.0") {
+                throw "weave-ai $AIVersion is older than 1.0.0"
             }
         }
     } else {

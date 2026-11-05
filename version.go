@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const minimumAI = "1.1.0"
+const minimumAI = "1.0.0"
 
 var versionPattern = regexp.MustCompile(`(\d+)\.(\d+)\.(\d+)`)
 
@@ -48,7 +48,7 @@ func checkWeaveAIVersion(ctx context.Context, binary string) string {
 	major, _ := strconv.Atoi(match[1])
 	minor, _ := strconv.Atoi(match[2])
 	patch, _ := strconv.Atoi(match[3])
-	required := []int{1, 1, 0}
+	required := []int{1, 0, 0}
 	actual := []int{major, minor, patch}
 	for index := range required {
 		if actual[index] > required[index] {

@@ -1,0 +1,4 @@
+fix: align dependency floors with v1.0.0
+
+Require weave and weave-ai >= 1.0.0 in the manifest, version check,
+installers, tests and docs for the v1.0.0 release line.

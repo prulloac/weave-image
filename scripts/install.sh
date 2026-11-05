@@ -243,21 +243,21 @@ ensure_weave_ai() {
   fi
   if [ -n "$ai_path" ]; then
     ai_version="$("$ai_path" --version 2>/dev/null | awk '{ print $2; exit }')"
-    if [ -n "$ai_version" ] && version_at_least "$ai_version" "1.1.0"; then
+    if [ -n "$ai_version" ] && version_at_least "$ai_version" "1.0.0"; then
       echo "weave-ai ${ai_version} is already installed"
       return
     fi
-    echo "weave-ai is missing vision support; installing >= 1.1.0"
+    echo "weave-ai is missing vision support; installing >= 1.0.0"
   else
-    echo "Installing weave-ai >= 1.1.0"
+    echo "Installing weave-ai >= 1.0.0"
   fi
   curl -fsSL https://raw.githubusercontent.com/prulloac/weave-ai/main/scripts/install.sh \
     | sh -s -- --bin-dir "$bin_dir"
   ai_path="${bin_dir}/weave-ai"
   [ -x "$ai_path" ] || error "weave-ai installation failed"
   ai_version="$("$ai_path" --version 2>/dev/null | awk '{ print $2; exit }')"
-  version_at_least "$ai_version" "1.1.0" ||
-    error "weave-ai ${ai_version} is older than 1.1.0"
+  version_at_least "$ai_version" "1.0.0" ||
+    error "weave-ai ${ai_version} is older than 1.0.0"
   echo "Installed weave-ai ${ai_version}"
 }
 

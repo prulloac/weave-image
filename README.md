@@ -23,9 +23,9 @@ irm https://raw.githubusercontent.com/prulloac/weave-image/main/scripts/install.
 The installer:
 
 - installs `weave-image` to a user-level bin directory;
-- checks `weave >= 1.1.0` at runtime;
+- checks `weave >= 1.0.0` at runtime;
 - installs or upgrades `weave-ai` unless `--no-ai` is passed;
-- verifies `weave-ai >= 1.1.0` for vision.
+- verifies `weave-ai >= 1.0.0` for vision.
 
 `--bin-dir <dir>` and `--no-modify-path` are supported. Environment equivalents:
 `WEAVE_IMAGE_VERSION`, `WEAVE_IMAGE_BIN_DIR`, `WEAVE_IMAGE_NO_MODIFY_PATH=1`, `WEAVE_IMAGE_NO_AI=1`.
@@ -65,8 +65,8 @@ that EXIF is sent to the provider. Errors never include image bytes or EXIF valu
   "name": "image",
   "asset_types": ["image/jpeg", "image/png", "image/webp", "image/gif"],
   "requires": [
-    {"name": "weave", "min_version": "1.1.0"},
-    {"name": "weave-ai", "min_version": "1.1.0"}
+    {"name": "weave", "min_version": "1.0.0"},
+    {"name": "weave-ai", "min_version": "1.0.0"}
   ],
   "capabilities": ["vision", "ocr", "exif"]
 }
@@ -98,8 +98,8 @@ Behavior examples live in [`docs/bdd/image.md`](docs/bdd/image.md). The authorit
 
 ## Compatibility
 
-- `weave >= 1.1.0`
-- `weave-ai >= 1.1.0`
+- `weave >= 1.0.0`
+- `weave-ai >= 1.0.0`
 
 ## License
 
