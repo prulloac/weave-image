@@ -153,6 +153,9 @@ func enrich(ctx context.Context, request enrichmentRequest) (enrichmentResponse,
 	if mediaType == "" {
 		mediaType = detectMediaType(path, data)
 	}
+	if !strings.HasPrefix(mediaType, "image/") {
+		return enrichmentResponse{V: cliVersion}, nil
+	}
 	dimensions, exif := localMetadata(path, data, mediaType)
 	ocrText, warning := runOCR(ctx, path)
 	warnings := make([]string, 0)

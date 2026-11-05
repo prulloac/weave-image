@@ -139,7 +139,7 @@ version="${tag#v}"
 
 archive="${BINARY}_${version}_${os}_${arch}.tar.gz"
 checksums="${BINARY}_${version}_checksums.txt"
-base="https://github.com/${REPO}/releases/download/${tag}"
+base="${WEAVE_IMAGE_RELEASE_BASE:-https://github.com/${REPO}/releases/download/${tag}}"
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 

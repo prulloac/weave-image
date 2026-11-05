@@ -193,6 +193,33 @@ func TestParseJPEGExif(t *testing.T) {
 	}
 }
 
+func TestNonImageIsSkipped(t *testing.T) {
+	root := t.TempDir()
+	if err := os.WriteFile(filepath.Join(root, "note.md"), []byte("hello"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	request := map[string]any{
+		"v": "weave.cli/v1", "type": "enrichment_request",
+		"doc_id": "note.md", "doc_path": "note.md", "bundle_root": root,
+		"media_type": "text/markdown",
+	}
+	input, err := json.Marshal(request)
+	if err != nil {
+		t.Fatal(err)
+	}
+	code, output, stderr := invoke(t, nil, input)
+	if code != 0 || stderr != "" {
+		t.Fatalf("exit=%d stderr=%q", code, stderr)
+	}
+	var response enrichmentResponse
+	if err := json.Unmarshal(output, &response); err != nil {
+		t.Fatal(err)
+	}
+	if response.V != cliVersion || response.InferredTitle != "" || len(response.Warnings) != 0 {
+		t.Fatalf("response = %+v", response)
+	}
+}
+
 func TestDirectInvocation(t *testing.T) {
 	root := t.TempDir()
 	writePNG(t, filepath.Join(root, "photo.png"))

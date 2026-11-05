@@ -37,7 +37,7 @@ switch ($env:PROCESSOR_ARCHITECTURE) {
 
 $Archive = "${Binary}_${VersionNumber}_windows_${Arch}.zip"
 $Checksums = "${Binary}_${VersionNumber}_checksums.txt"
-$Base = "https://github.com/$Repo/releases/download/$Tag"
+$Base = if ($env:WEAVE_IMAGE_RELEASE_BASE) { $env:WEAVE_IMAGE_RELEASE_BASE } else { "https://github.com/$Repo/releases/download/$Tag" }
 $Temp = Join-Path ([System.IO.Path]::GetTempPath()) ("weave-image-install-" + [guid]::NewGuid().ToString("N"))
 New-Item -ItemType Directory -Path $Temp -Force | Out-Null
 
