@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -eu
 
 REPO="prulloac/weave-image"
 BINARY="weave-image"
