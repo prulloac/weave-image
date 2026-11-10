@@ -71,7 +71,7 @@ func TestDescribeJSON(t *testing.T) {
 		len(value.Capabilities) != 3 {
 		t.Fatalf("manifest = %+v", value)
 	}
-	if len(value.Requires) != 2 || value.Requires[1].MinVersion != "1.0.0" {
+	if len(value.Requires) != 2 || value.Requires[1].MinVersion != "0.7.0" {
 		t.Fatalf("requirements = %+v", value.Requires)
 	}
 }
@@ -82,7 +82,7 @@ func TestVisionAndOCRPrecedence(t *testing.T) {
 	bin := filepath.Join(t.TempDir(), "bin")
 	writeExecutable(t, filepath.Join(bin, "tesseract"), "#!/bin/sh\necho 'Opening hours'\n")
 	writeExecutable(t, filepath.Join(root, ".weave", "bin", "weave-ai"), `#!/bin/sh
-if [ "$1" = "--version" ]; then echo "weave-ai v1.0.0 (weave.cli/v1)"; exit 0; fi
+if [ "$1" = "--version" ]; then echo "weave-ai v0.7.0 (weave.cli/v1)"; exit 0; fi
 cat >/dev/null
 echo '{"v":"weave.cli/v1","title":"Shop","description":"A storefront","text":"AI text","keywords":["shop","sign"]}'
 `)
@@ -141,7 +141,7 @@ func TestOldWeaveAIWarns(t *testing.T) {
 	root := t.TempDir()
 	writePNG(t, filepath.Join(root, "photo.png"))
 	writeExecutable(t, filepath.Join(root, ".weave", "bin", "weave-ai"), `#!/bin/sh
-if [ "$1" = "--version" ]; then echo "weave-ai v0.9.0 (weave.cli/v1)"; exit 0; fi
+if [ "$1" = "--version" ]; then echo "weave-ai v0.6.0 (weave.cli/v1)"; exit 0; fi
 cat >/dev/null
 echo '{"v":"weave.cli/v1"}'
 `)
