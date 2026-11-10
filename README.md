@@ -101,6 +101,12 @@ Behavior examples live in [`docs/bdd/image.md`](docs/bdd/image.md). The authorit
 - `weave >= 0.7.0`
 - `weave-ai >= 0.7.0`
 
+## Issues
+
+This repository does not accept issues. Report first-party defects and documentation errors in
+[`prulloac/weave`](https://github.com/prulloac/weave/issues/new/choose); security reports use private
+vulnerability reporting there.
+
 ## License
 
 MIT. See [`LICENSE`](LICENSE).
