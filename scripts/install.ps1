@@ -90,14 +90,14 @@ try {
             $AIVersion = (& $AICommand --version 2>$null | Select-Object -First 1).Split(" ")[1]
             if ($AIVersion) {
                 $Parsed = $AIVersion.TrimStart("v")
-                if ($Parsed -match '^\d+\.\d+\.\d+$' -and [version]$Parsed -ge [version]"0.7.0") {
+                if ($Parsed -match '^\d+\.\d+\.\d+$' -and [version]$Parsed -ge [version]"0.8.0") {
                     $AINeedsInstall = $false
                     Write-Host "weave-ai $AIVersion is already installed"
                 }
             }
         }
         if ($AINeedsInstall) {
-            Write-Host "Installing weave-ai >= 0.7.0"
+            Write-Host "Installing weave-ai >= 0.8.0"
             $AIScriptPath = Join-Path $Temp "weave-ai-install.ps1"
             Invoke-WebRequest -Uri "https://raw.githubusercontent.com/prulloac/weave-ai/main/scripts/install.ps1" -OutFile $AIScriptPath
             $AIArgs = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $AIScriptPath, "-BinDir", $BinDir)
@@ -108,8 +108,8 @@ try {
             if (-not (Test-Path $AICommand)) { throw "weave-ai installation failed" }
             $AIVersion = (& $AICommand --version 2>$null | Select-Object -First 1).Split(" ")[1]
             $Parsed = $AIVersion.TrimStart("v")
-            if (-not ($Parsed -match '^\d+\.\d+\.\d+$') -or [version]$Parsed -lt [version]"0.7.0") {
-                throw "weave-ai $AIVersion is older than 0.7.0"
+            if (-not ($Parsed -match '^\d+\.\d+\.\d+$') -or [version]$Parsed -lt [version]"0.8.0") {
+                throw "weave-ai $AIVersion is older than 0.8.0"
             }
         }
     } else {

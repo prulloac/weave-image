@@ -94,8 +94,8 @@ func describe(args []string, stdout, stderr io.Writer) int {
 		Name:       "image",
 		AssetTypes: []string{"image/jpeg", "image/png", "image/webp", "image/gif"},
 		Requires: []requirement{
-			{Name: "weave", MinVersion: "0.7.0"},
-			{Name: "weave-ai", MinVersion: "0.7.0"},
+			{Name: "weave", MinVersion: "0.8.0"},
+			{Name: "weave-ai", MinVersion: "0.8.0"},
 		},
 		Capabilities: []string{"vision", "ocr", "exif"},
 	}
@@ -107,7 +107,7 @@ func describe(args []string, stdout, stderr io.Writer) int {
 			return 0
 		}
 	}
-	fmt.Fprintf(stdout, "name: image\nasset_types: %s\nrequires: weave >= 0.7.0, weave-ai >= 0.7.0\n",
+	fmt.Fprintf(stdout, "name: image\nasset_types: %s\nrequires: weave >= 0.8.0, weave-ai >= 0.8.0\n",
 		strings.Join(value.AssetTypes, ", "))
 	fmt.Fprintln(stdout, "capabilities: vision, ocr, exif")
 	fmt.Fprintln(stdout, "note: EXIF is sent to the configured AI provider")

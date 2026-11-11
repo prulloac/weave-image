@@ -243,13 +243,13 @@ ensure_weave_ai() {
   fi
   if [ -n "$ai_path" ]; then
     ai_version="$("$ai_path" --version 2>/dev/null | awk '{ print $2; exit }')"
-    if [ -n "$ai_version" ] && version_at_least "$ai_version" "0.7.0"; then
+    if [ -n "$ai_version" ] && version_at_least "$ai_version" "0.8.0"; then
       echo "weave-ai ${ai_version} is already installed"
       return
     fi
-    echo "weave-ai is missing vision support; installing >= 0.7.0"
+    echo "weave-ai is missing vision support; installing >= 0.8.0"
   else
-    echo "Installing weave-ai >= 0.7.0"
+    echo "Installing weave-ai >= 0.8.0"
   fi
   ai_install_args=(--bin-dir "$bin_dir")
   if [ "$modify_path" -eq 0 ]; then
@@ -260,8 +260,8 @@ ensure_weave_ai() {
   ai_path="${bin_dir}/weave-ai"
   [ -x "$ai_path" ] || error "weave-ai installation failed"
   ai_version="$("$ai_path" --version 2>/dev/null | awk '{ print $2; exit }')"
-  version_at_least "$ai_version" "0.7.0" ||
-    error "weave-ai ${ai_version} is older than 0.7.0"
+  version_at_least "$ai_version" "0.8.0" ||
+    error "weave-ai ${ai_version} is older than 0.8.0"
   echo "Installed weave-ai ${ai_version}"
 }
 

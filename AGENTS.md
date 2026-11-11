@@ -50,7 +50,7 @@ scripts/           verification, installers and release helpers
 
 - Tags use `vX.Y.Z`; release archives are built for six static targets.
 - Binary name is `weave-image`; Weave discovers it by the `weave-` prefix.
-- `requires` names `weave >= 0.7.0` and `weave-ai >= 0.7.0`.
+- `requires` names `weave >= 0.8.0` and `weave-ai >= 0.8.0`.
 
 ## Documentation split
 
